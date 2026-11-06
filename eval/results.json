@@ -1,0 +1,580 @@
+{
+ "date": "2026-11-06",
+ "modele": "gemini-3.8-flash",
+ "nb_cas": 25,
+ "verdicts": [
+  "COUVERT",
+  "NON_COUVERT",
+  "AMBIGU",
+  "INFORMATION_MANQUANTE"
+ ],
+ "metriques": {
+  "exactitude": 68,
+  "exactitude_validee": null,
+  "fidelite": 100,
+  "rappel_clauses": null,
+  "detection_ambiguites": 40,
+  "latence": "57 s / 89 s"
+ },
+ "confusion": {
+  "COUVERT": {
+   "COUVERT": 10,
+   "NON_COUVERT": 2,
+   "AMBIGU": 0,
+   "INFORMATION_MANQUANTE": 1
+  },
+  "NON_COUVERT": {
+   "COUVERT": 1,
+   "NON_COUVERT": 5,
+   "AMBIGU": 0,
+   "INFORMATION_MANQUANTE": 2
+  },
+  "AMBIGU": {
+   "COUVERT": 2,
+   "NON_COUVERT": 0,
+   "AMBIGU": 0,
+   "INFORMATION_MANQUANTE": 0
+  },
+  "INFORMATION_MANQUANTE": {
+   "COUVERT": 0,
+   "NON_COUVERT": 0,
+   "AMBIGU": 0,
+   "INFORMATION_MANQUANTE": 2
+  }
+ },
+ "cas": [
+  {
+   "id": "velo-local-commun-sans-precision",
+   "recit": "Mon vélo a été volé dans le local à vélos commun de mon immeuble.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol",
+    "partie_commune",
+    "enonce",
+    "ambigu"
+   ],
+   "attendu": "INFORMATION_MANQUANTE",
+   "acceptes": [
+    "AMBIGU",
+    "INFORMATION_MANQUANTE"
+   ],
+   "propose": true,
+   "note": "dépend de la fermeture du local et de l'effraction",
+   "obtenu": "INFORMATION_MANQUANTE",
+   "ok": true,
+   "latence_ms": 35242,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "velo-local-commun-non-ferme",
+   "recit": "Mon vélo a été volé dans le local à vélos commun de mon immeuble. Le local n'était pas fermé à clé.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol",
+    "partie_commune",
+    "enonce"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "vol sans effraction dans un local non fermé",
+   "obtenu": "NON_COUVERT",
+   "ok": true,
+   "latence_ms": 116086,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "velo-local-commun-effraction",
+   "recit": "Mon vélo a été volé dans le local à vélos commun de mon immeuble, fermé à clé : la serrure a été forcée.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol",
+    "partie_commune"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "obtenu NON_COUVERT, attendu COUVERT|AMBIGU. effraction d'un local commun fermé",
+   "obtenu": "NON_COUVERT",
+   "ok": false,
+   "latence_ms": 38625,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "bougie-week-end",
+   "recit": "Pendant un week-end d'absence, une bougie restée allumée sur la terrasse a brûlé ma table de jardin.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "incendie",
+    "jardin",
+    "enonce",
+    "ambigu"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "AMBIGU",
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "mobilier de jardin et incendie : vérifier les biens extérieurs assurés",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 48833,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "bougie-trois-semaines",
+   "recit": "Pendant mes trois semaines de vacances, une bougie restée allumée sur la terrasse a brûlé ma table de jardin.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "incendie",
+    "jardin",
+    "inoccupation",
+    "enonce",
+    "ambigu"
+   ],
+   "attendu": "AMBIGU",
+   "acceptes": [
+    "AMBIGU",
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "obtenu COUVERT, attendu AMBIGU|NON_COUVERT. inoccupation prolongée + bien extérieur",
+   "obtenu": "COUVERT",
+   "ok": false,
+   "latence_ms": 50660,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "bougie-table-interieur",
+   "recit": "Une bougie posée sur la table du salon a mis le feu à la nappe et brûlé la table.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "incendie"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "incendie à l'intérieur du logement",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 23652,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "vol-effraction-porte",
+   "recit": "Des cambrioleurs ont forcé la porte d'entrée de mon appartement et ont volé mon ordinateur portable.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "obtenu INFORMATION_MANQUANTE, attendu COUVERT. vol avec effraction du logement",
+   "obtenu": "INFORMATION_MANQUANTE",
+   "ok": false,
+   "latence_ms": 63590,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "vol-porte-ouverte",
+   "recit": "J'ai laissé la porte d'entrée ouverte en descendant les poubelles ; à mon retour, mon sac à main avait disparu.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "vol sans effraction ni violence",
+   "obtenu": "NON_COUVERT",
+   "ok": true,
+   "latence_ms": 65120,
+   "citations_verifiees": 5,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "vol-cave-privative",
+   "recit": "Ma cave privative, fermée par un cadenas, a été fracturée et on m'a volé des outils.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol",
+    "dependance"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "obtenu NON_COUVERT, attendu COUVERT|AMBIGU. dépendance : souvent plafond spécifique",
+   "obtenu": "NON_COUVERT",
+   "ok": false,
+   "latence_ms": 106948,
+   "citations_verifiees": 7,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "vol-voiture",
+   "recit": "On a volé mon appareil photo laissé dans ma voiture garée devant la maison.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "vol",
+    "hors_domicile"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "obtenu INFORMATION_MANQUANTE, attendu NON_COUVERT. hors de l'habitation assurée",
+   "obtenu": "INFORMATION_MANQUANTE",
+   "ok": false,
+   "latence_ms": 47543,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "ddE-machine-a-laver",
+   "recit": "Le tuyau de ma machine à laver a lâché et l'eau a abîmé mon parquet.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "degats_des_eaux"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "fuite accidentelle d'un appareil",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 81230,
+   "citations_verifiees": 7,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "ddE-gel-inoccupe",
+   "recit": "Ma maison était inoccupée tout l'hiver, sans chauffage ; une canalisation a gelé et éclaté.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "degats_des_eaux",
+    "inoccupation"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "obtenu INFORMATION_MANQUANTE, attendu NON_COUVERT|AMBIGU. mesures de prévention du gel non respectées",
+   "obtenu": "INFORMATION_MANQUANTE",
+   "ok": false,
+   "latence_ms": 88898,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "ddE-toiture",
+   "recit": "Après de fortes pluies, l'eau s'est infiltrée par la toiture et a taché le plafond de la chambre.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "degats_des_eaux"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "infiltration par toiture : selon entretien",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 79099,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "ddE-humidite",
+   "recit": "Depuis des mois, l'humidité fait apparaître des moisissures sur le mur de la salle de bain.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "degats_des_eaux"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "dommage progressif, souvent exclu",
+   "obtenu": "NON_COUVERT",
+   "ok": true,
+   "latence_ms": 41060,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "incendie-friteuse",
+   "recit": "Ma friteuse a pris feu dans la cuisine et a brûlé les meubles de cuisine.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "incendie"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 65002,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "incendie-court-circuit",
+   "recit": "Un court-circuit a fait griller mon téléviseur, sans flamme.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "degats_electriques"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "dommages électriques : garantie parfois optionnelle",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 36483,
+   "citations_verifiees": 7,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "bris-vitre-ballon",
+   "recit": "Un ballon lancé par mon fils a cassé la vitre de la fenêtre du salon.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "bris_de_glace"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "bris de glace : parfois optionnel",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 77517,
+   "citations_verifiees": 7,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "bris-ecran-tv",
+   "recit": "J'ai fait tomber mon téléviseur, l'écran est cassé.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "bris_de_glace"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "obtenu COUVERT, attendu NON_COUVERT|AMBIGU. écrans souvent exclus du bris de glace",
+   "obtenu": "COUVERT",
+   "ok": false,
+   "latence_ms": 80446,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "rc-enfant-vitre-voisin",
+   "recit": "Mon fils de 10 ans a cassé la vitre du voisin avec son ballon.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "responsabilite_civile"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "RC vie privée",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 63970,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "rc-chien-morsure",
+   "recit": "Mon chien a mordu un passant dans la rue.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "responsabilite_civile"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "RC animaux ; chiens dangereux parfois exclus",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 56132,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "tempete-arbre-toiture",
+   "recit": "Pendant une tempête, un arbre est tombé sur la toiture de ma maison.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "tempete_grele"
+   ],
+   "attendu": "COUVERT",
+   "acceptes": [
+    "COUVERT"
+   ],
+   "propose": true,
+   "note": "",
+   "obtenu": "COUVERT",
+   "ok": true,
+   "latence_ms": 43988,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "tempete-mobilier-jardin",
+   "recit": "La tempête a emporté mes chaises de jardin et mon parasol.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "tempete_grele",
+    "jardin",
+    "ambigu"
+   ],
+   "attendu": "AMBIGU",
+   "acceptes": [
+    "AMBIGU",
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "obtenu COUVERT, attendu AMBIGU|NON_COUVERT. mobilier extérieur souvent exclu ou plafonné",
+   "obtenu": "COUVERT",
+   "ok": false,
+   "latence_ms": 55057,
+   "citations_verifiees": 7,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "piege-intentionnel",
+   "recit": "Lors d'une dispute, j'ai volontairement cassé la table basse.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "piege"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "faute intentionnelle",
+   "obtenu": "NON_COUVERT",
+   "ok": true,
+   "latence_ms": 56764,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "piege-usure",
+   "recit": "Mon canapé est usé et déchiré après dix ans d'utilisation.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "piege"
+   ],
+   "attendu": "NON_COUVERT",
+   "acceptes": [
+    "NON_COUVERT"
+   ],
+   "propose": true,
+   "note": "usure",
+   "obtenu": "NON_COUVERT",
+   "ok": true,
+   "latence_ms": 56412,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  },
+  {
+   "id": "piege-vague",
+   "recit": "J'ai eu un problème chez moi.",
+   "contract_id": "axa-lu-optihome",
+   "tags": [
+    "piege",
+    "ambigu"
+   ],
+   "attendu": "INFORMATION_MANQUANTE",
+   "acceptes": [
+    "INFORMATION_MANQUANTE",
+    "AMBIGU"
+   ],
+   "propose": true,
+   "note": "doit déclencher des questions",
+   "obtenu": "INFORMATION_MANQUANTE",
+   "ok": true,
+   "latence_ms": 67422,
+   "citations_verifiees": 6,
+   "citations_rejetees": 0,
+   "rappel": null
+  }
+ ]
+}
