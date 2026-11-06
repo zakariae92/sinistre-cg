@@ -1,0 +1,103 @@
+# Cas synthétiques. `attendu` est PROPOSÉ (propose: true) sans lecture complète des clauses :
+# à valider à la main en lisant le contrat, puis passer propose: false.
+# verdicts : COUVERT | NON_COUVERT | AMBIGU | INFORMATION_MANQUANTE ; "AMBIGU|INFORMATION_MANQUANTE" = l'un ou l'autre accepté.
+- id: velo-local-commun-sans-precision
+  recit: "Mon vélo a été volé dans le local à vélos commun de mon immeuble."
+  tags: [vol, partie_commune, enonce, ambigu]
+  attendu: {verdict: "AMBIGU|INFORMATION_MANQUANTE", propose: true, note: "dépend de la fermeture du local et de l'effraction"}
+- id: velo-local-commun-non-ferme
+  recit: "Mon vélo a été volé dans le local à vélos commun de mon immeuble. Le local n'était pas fermé à clé."
+  tags: [vol, partie_commune, enonce]
+  attendu: {verdict: NON_COUVERT, propose: true, note: "vol sans effraction dans un local non fermé"}
+- id: velo-local-commun-effraction
+  recit: "Mon vélo a été volé dans le local à vélos commun de mon immeuble, fermé à clé : la serrure a été forcée."
+  tags: [vol, partie_commune]
+  attendu: {verdict: "COUVERT|AMBIGU", propose: true, note: "effraction d'un local commun fermé"}
+- id: bougie-week-end
+  recit: "Pendant un week-end d'absence, une bougie restée allumée sur la terrasse a brûlé ma table de jardin."
+  tags: [incendie, jardin, enonce, ambigu]
+  attendu: {verdict: "AMBIGU|COUVERT", propose: true, note: "mobilier de jardin et incendie : vérifier les biens extérieurs assurés"}
+- id: bougie-trois-semaines
+  recit: "Pendant mes trois semaines de vacances, une bougie restée allumée sur la terrasse a brûlé ma table de jardin."
+  tags: [incendie, jardin, inoccupation, enonce, ambigu]
+  attendu: {verdict: "AMBIGU|NON_COUVERT", propose: true, note: "inoccupation prolongée + bien extérieur"}
+- id: bougie-table-interieur
+  recit: "Une bougie posée sur la table du salon a mis le feu à la nappe et brûlé la table."
+  tags: [incendie]
+  attendu: {verdict: COUVERT, propose: true, note: "incendie à l'intérieur du logement"}
+- id: vol-effraction-porte
+  recit: "Des cambrioleurs ont forcé la porte d'entrée de mon appartement et ont volé mon ordinateur portable."
+  tags: [vol]
+  attendu: {verdict: COUVERT, propose: true, note: "vol avec effraction du logement"}
+- id: vol-porte-ouverte
+  recit: "J'ai laissé la porte d'entrée ouverte en descendant les poubelles ; à mon retour, mon sac à main avait disparu."
+  tags: [vol]
+  attendu: {verdict: "NON_COUVERT|AMBIGU", propose: true, note: "vol sans effraction ni violence"}
+- id: vol-cave-privative
+  recit: "Ma cave privative, fermée par un cadenas, a été fracturée et on m'a volé des outils."
+  tags: [vol, dependance]
+  attendu: {verdict: "COUVERT|AMBIGU", propose: true, note: "dépendance : souvent plafond spécifique"}
+- id: vol-voiture
+  recit: "On a volé mon appareil photo laissé dans ma voiture garée devant la maison."
+  tags: [vol, hors_domicile]
+  attendu: {verdict: NON_COUVERT, propose: true, note: "hors de l'habitation assurée"}
+- id: ddE-machine-a-laver
+  recit: "Le tuyau de ma machine à laver a lâché et l'eau a abîmé mon parquet."
+  tags: [degats_des_eaux]
+  attendu: {verdict: COUVERT, propose: true, note: "fuite accidentelle d'un appareil"}
+- id: ddE-gel-inoccupe
+  recit: "Ma maison était inoccupée tout l'hiver, sans chauffage ; une canalisation a gelé et éclaté."
+  tags: [degats_des_eaux, inoccupation]
+  attendu: {verdict: "NON_COUVERT|AMBIGU", propose: true, note: "mesures de prévention du gel non respectées"}
+- id: ddE-toiture
+  recit: "Après de fortes pluies, l'eau s'est infiltrée par la toiture et a taché le plafond de la chambre."
+  tags: [degats_des_eaux]
+  attendu: {verdict: "COUVERT|AMBIGU", propose: true, note: "infiltration par toiture : selon entretien"}
+- id: ddE-humidite
+  recit: "Depuis des mois, l'humidité fait apparaître des moisissures sur le mur de la salle de bain."
+  tags: [degats_des_eaux]
+  attendu: {verdict: NON_COUVERT, propose: true, note: "dommage progressif, souvent exclu"}
+- id: incendie-friteuse
+  recit: "Ma friteuse a pris feu dans la cuisine et a brûlé les meubles de cuisine."
+  tags: [incendie]
+  attendu: {verdict: COUVERT, propose: true, note: ""}
+- id: incendie-court-circuit
+  recit: "Un court-circuit a fait griller mon téléviseur, sans flamme."
+  tags: [degats_electriques]
+  attendu: {verdict: "COUVERT|AMBIGU", propose: true, note: "dommages électriques : garantie parfois optionnelle"}
+- id: bris-vitre-ballon
+  recit: "Un ballon lancé par mon fils a cassé la vitre de la fenêtre du salon."
+  tags: [bris_de_glace]
+  attendu: {verdict: "COUVERT|AMBIGU", propose: true, note: "bris de glace : parfois optionnel"}
+- id: bris-ecran-tv
+  recit: "J'ai fait tomber mon téléviseur, l'écran est cassé."
+  tags: [bris_de_glace]
+  attendu: {verdict: "NON_COUVERT|AMBIGU", propose: true, note: "écrans souvent exclus du bris de glace"}
+- id: rc-enfant-vitre-voisin
+  recit: "Mon fils de 10 ans a cassé la vitre du voisin avec son ballon."
+  tags: [responsabilite_civile]
+  attendu: {verdict: COUVERT, propose: true, note: "RC vie privée"}
+- id: rc-chien-morsure
+  recit: "Mon chien a mordu un passant dans la rue."
+  tags: [responsabilite_civile]
+  attendu: {verdict: "COUVERT|AMBIGU", propose: true, note: "RC animaux ; chiens dangereux parfois exclus"}
+- id: tempete-arbre-toiture
+  recit: "Pendant une tempête, un arbre est tombé sur la toiture de ma maison."
+  tags: [tempete_grele]
+  attendu: {verdict: COUVERT, propose: true, note: ""}
+- id: tempete-mobilier-jardin
+  recit: "La tempête a emporté mes chaises de jardin et mon parasol."
+  tags: [tempete_grele, jardin, ambigu]
+  attendu: {verdict: "AMBIGU|NON_COUVERT", propose: true, note: "mobilier extérieur souvent exclu ou plafonné"}
+- id: piege-intentionnel
+  recit: "Lors d'une dispute, j'ai volontairement cassé la table basse."
+  tags: [piege]
+  attendu: {verdict: NON_COUVERT, propose: true, note: "faute intentionnelle"}
+- id: piege-usure
+  recit: "Mon canapé est usé et déchiré après dix ans d'utilisation."
+  tags: [piege]
+  attendu: {verdict: NON_COUVERT, propose: true, note: "usure"}
+- id: piege-vague
+  recit: "J'ai eu un problème chez moi."
+  tags: [piege, ambigu]
+  attendu: {verdict: "INFORMATION_MANQUANTE|AMBIGU", propose: true, note: "doit déclencher des questions"}

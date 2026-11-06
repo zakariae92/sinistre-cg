@@ -1,0 +1,10 @@
+{% macro badge(verdict) -%}
+{% set styles = {"COUVERT": "bg-green-600", "NON_COUVERT": "bg-red-600", "AMBIGU": "bg-amber-500", "INFORMATION_MANQUANTE": "bg-slate-500"} %}
+<span class="inline-block text-white text-xs font-semibold tracking-wide rounded px-2 py-1 {{ styles[verdict] }}">{{ verdict|replace("_", " ") }}</span>
+{%- endmacro %}
+
+{% macro cite(contract_id, ref, label=None, source_url="") -%}
+<button type="button" class="cite" data-contract="{{ contract_id }}" data-page="{{ ref.page_debut }}"
+  data-bboxes='{{ ref.bboxes|tojson }}' data-source="{{ source_url }}"
+  title="{{ ref.titre }} (p. {{ ref.page_debut }})">{{ label or ("Art. " ~ ref.numero if ref.numero else ref.titre|truncate(28)) }}</button>
+{%- endmacro %}

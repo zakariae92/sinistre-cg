@@ -1,0 +1,56 @@
+# Conditions générales publiques. Les PDF ne sont pas versionnés : `make fetch` les télécharge.
+# statut : a_verifier -> rempli par scripts/fetch_corpus.py dans data/corpus_report.md
+- id: axa-lu-optihome
+  assureur: AXA Assurances Luxembourg
+  produit: OptiHome
+  pays: LU
+  cadre_legal: Loi du 27 juillet 1997 sur le contrat d'assurance (LU)
+  langue: fr
+  version: W03_24
+  url: https://axa.lu/sites/axa/files/2025-10/CA_OptiHome_W03_24_FR_0.pdf
+  statut: a_verifier
+- id: baloise-be-habitation-select
+  assureur: Baloise Belgium
+  produit: Habitation Select
+  pays: BE
+  cadre_legal: Loi du 4 avril 2014 relative aux assurances (BE)
+  langue: fr
+  version: 06/2026
+  url: https://www.baloise.be/dam/jcr:b8f29d19-63c3-4cb0-b5c1-d75fb14f9954/B2053.BRA.06.26-CG-Habitation-Select.pdf
+  statut: a_verifier
+- id: luko-hmin-2504
+  assureur: Luko
+  produit: Habitation (HMIN)
+  pays: FR
+  cadre_legal: Code des assurances (FR)
+  langue: fr
+  version: '2504'
+  url: https://www.fr.luko.eu/dam/documents/t-c/Conditions_generales_HMIN_2504.pdf
+  statut: a_verifier
+- id: assurpeople-ma-maison-2023
+  assureur: AssurPeople
+  produit: Ma Maison
+  pays: FR
+  cadre_legal: Code des assurances (FR)
+  langue: fr
+  version: '2023'
+  url: https://assurpeople.com/sites/default/files/conditions-generales/455mamaison-dipa-cg1.pdf
+  statut: a_verifier
+- id: ccf-mrh
+  assureur: CCF
+  produit: Multirisque Habitation
+  pays: FR
+  cadre_legal: Code des assurances (FR)
+  langue: fr
+  version: inconnue
+  url: https://ccf.fr/content/dam/documentation-commerciale/fiches/cg-notice-ccf-mrh.pdf
+  statut: a_verifier
+- id: altima-mrh
+  assureur: Altima
+  produit: Multirisque Habitation
+  pays: FR
+  cadre_legal: Code des assurances (FR)
+  langue: fr
+  version: inconnue
+  url: https://www.altima-assurances.fr/sites/default/files/produits/habitation/cg_mrh.pdf
+  statut: a_verifier

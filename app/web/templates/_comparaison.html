@@ -1,0 +1,31 @@
+{% from "_macros.html" import badge, cite %}
+<article class="bg-white border rounded-lg p-4">
+  <p class="text-sm text-slate-500 mb-3">Même sinistre, {{ resultats|length }} contrats. Faits extraits une seule fois : {{ faits.resume }}</p>
+  <div class="overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead><tr class="text-left text-slate-500 border-b"><th class="py-2 pr-2">Contrat</th><th class="pr-2">Verdict</th><th class="pr-2">Raison principale</th><th>Citation clé</th></tr></thead>
+    <tbody>
+    {% for a in resultats %}
+      {% if a is string %}
+      <tr class="border-b"><td colspan="4" class="py-2 text-red-700">{{ a }}</td></tr>
+      {% else %}
+      {% set c = noms[a.contract_id] %}
+      {% set cle = (a.resultat.etapes|selectattr("type", "equalto", "conclusion")|list or a.resultat.etapes)|first %}
+      <tr class="border-b align-top">
+        <td class="py-2 pr-2">
+          <form hx-post="/analyser" hx-target="#resultat" hx-indicator="#chargement">
+            <input type="hidden" name="contract_id" value="{{ a.contract_id }}"><input type="hidden" name="recit" value="{{ recit }}">
+            <button class="text-left text-blue-700 hover:underline">{{ c.assureur }} – {{ c.produit }}</button>
+          </form>
+          <span class="text-xs text-slate-400">{{ c.pays }} · {{ c.langue|upper }}</span>
+        </td>
+        <td class="pr-2">{{ badge(a.resultat.verdict) }}</td>
+        <td class="pr-2">{{ a.resultat.resume }}</td>
+        <td>{% if cle and cle.citations %}{{ cite(a.contract_id, a.clauses[cle.citations[0].clause_id], source_url=c.source_url) }}{% endif %}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</article>

@@ -1,0 +1,41 @@
+[project]
+name = "sinistre-cg"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.162.0",
+    "google-genai>=3.0.0",
+    "httpx>=0.28.1",
+    "jinja2>=3.1.6",
+    "pgvector>=0.5.1",
+    "psycopg[binary]>=3.3.8",
+    "pydantic-settings>=2.16.2",
+    "pymupdf>=2.1",
+    "python-multipart>=0.0.33",
+    "pyyaml>=6.0.3",
+    "rapidfuzz>=3.14.6",
+    "truststore>=0.10.5",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+    "types-pyyaml>=6.0.12.20261103",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+filterwarnings = ["ignore::SyntaxWarning", "ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 130
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true

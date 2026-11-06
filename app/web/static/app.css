@@ -1,0 +1,7 @@
+.cite { display: inline-block; font-size: .75rem; padding: 0 .5rem; border-radius: 9999px;
+  background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; cursor: pointer; }
+.cite:hover { background: #c7d2fe; }
+.pdf-page { position: relative; margin: 0 auto 8px; background: white; box-shadow: 0 1px 3px rgb(0 0 0 / .2); }
+.hl { position: absolute; background: rgb(250 204 21 / .45); outline: 1px solid rgb(234 179 8 / .6); pointer-events: none; }
+.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator, .htmx-request.htmx-indicator { display: inline; }

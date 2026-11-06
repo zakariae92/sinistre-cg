@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analyse de sinistre – CG habitation</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <header class="bg-white border-b">
+    <div class="max-w-[1500px] mx-auto px-4 py-3 flex flex-wrap items-center gap-x-8 gap-y-2">
+      <a href="/" class="font-semibold text-slate-900">Analyse de sinistre — conditions générales habitation</a>
+      <nav class="flex gap-5 text-sm">
+        <a href="/" class="hover:underline">Analyse</a>
+        <a href="/comparer" class="hover:underline">Comparer</a>
+        <a href="/contrats" class="hover:underline">Contrats</a>
+        <a href="/evaluation" class="hover:underline">Évaluation</a>
+        <a href="/a-propos" class="hover:underline">À propos</a>
+      </nav>
+    </div>
+    <p class="max-w-[1500px] mx-auto px-4 pb-2 text-xs text-slate-500">
+      Démonstration technique, ne constitue pas un avis juridique ni une décision d'indemnisation.
+      Documents publics, liens vers les sources.
+    </p>
+  </header>
+  <main class="max-w-[1500px] mx-auto px-4 py-5">{% block content %}{% endblock %}</main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

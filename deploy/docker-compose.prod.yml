@@ -1,0 +1,58 @@
+# Production, on the rag-LexEU VM (Oracle Always Free, ARM): this stack joins LexEU's Docker network
+# so that LexEU's Caddy serves it on its own sub-domain and its BGE-M3 server computes embeddings.
+#
+#   internet ─443─► caddy (lexeu) ─► app ─┬─► postgres (pgvector, this stack)
+#                                         └─► embeddings (lexeu)          ─► Gemini API (reasoning only)
+#
+#   cd /opt/sinistre && docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --wait
+name: sinistre
+
+x-service: &service
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  app:
+    <<: *service
+    image: ghcr.io/zakariae92/sinistre-cg:${SINISTRE_TAG:-latest}
+    environment:
+      DATABASE_URL: postgresql://sinistre:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@sinistre-db:5432/sinistre # not "postgres": LexEU has one on the shared network
+      EMBEDDINGS_URL: http://embeddings:80
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?set GEMINI_API_KEY in .env}
+      MAX_ANALYSES_PAR_JOUR: ${MAX_ANALYSES_PAR_JOUR:-300}
+    volumes:
+      - ./data:/app/data # PDFs (downloaded on the VM, never in git) + reports
+    networks:
+      default:
+      lexeu:
+        aliases: [sinistre] # LexEU's Caddy proxies to sinistre:8000
+    depends_on:
+      postgres: { condition: service_healthy }
+    deploy: { resources: { limits: { memory: 1g } } }
+
+  postgres:
+    <<: *service
+    image: pgvector/pgvector:0.8.1-pg17
+    environment:
+      POSTGRES_USER: sinistre
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: sinistre
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    networks:
+      default:
+        aliases: [sinistre-db]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sinistre"]
+      interval: 5s
+      retries: 10
+    deploy: { resources: { limits: { memory: 1g } } }
+
+networks:
+  lexeu:
+    external: true
+    name: lexeu_default
+
+volumes:
+  postgres_data:

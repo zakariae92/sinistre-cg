@@ -1,0 +1,59 @@
+{% from "_macros.html" import badge, cite %}
+{% set r = a.resultat %}
+<article class="bg-white border rounded-lg p-4 space-y-4">
+  <div class="flex items-center gap-3 flex-wrap">
+    {{ badge(r.verdict) }}
+    <span class="text-sm text-slate-500">{{ contrat.assureur }} – {{ contrat.produit }} · confiance {{ r.confiance }}</span>
+  </div>
+  <p>{{ r.resume }}</p>
+
+  <ol class="relative border-l border-slate-200 ml-2 space-y-4">
+    {% for e in r.etapes %}
+    <li class="ml-4">
+      <span class="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-slate-300"></span>
+      <p class="text-xs uppercase tracking-wide text-slate-500">{{ e.type }}</p>
+      <p class="text-sm">{{ e.affirmation }}</p>
+      <div class="mt-1 space-y-1">
+        {% for c in e.citations %}
+        <div class="text-xs text-slate-600">
+          {{ cite(a.contract_id, a.clauses[c.clause_id], source_url=contrat.source_url) }}
+          <span class="italic">« {{ c.extrait }} »</span>
+        </div>
+        {% endfor %}
+      </div>
+    </li>
+    {% endfor %}
+  </ol>
+
+  {% if r.ambiguites %}
+  <div class="rounded border border-amber-200 bg-amber-50 p-3">
+    <h3 class="text-sm font-semibold mb-1">Ambiguïtés</h3>
+    <ul class="list-disc ml-5 text-sm space-y-1">{% for x in r.ambiguites %}<li>{{ x }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if r.questions %}
+  <div class="rounded border border-slate-200 bg-slate-50 p-3">
+    <h3 class="text-sm font-semibold mb-2">Questions à poser à l'assuré</h3>
+    {% for q in r.questions %}
+    <form hx-post="/analyser" hx-target="#resultat" hx-indicator="#chargement" class="flex flex-wrap items-center gap-2 mb-2 text-sm">
+      <input type="hidden" name="contract_id" value="{{ a.contract_id }}">
+      <input type="hidden" name="recit" value="{{ recit }}">
+      <input type="hidden" name="faits" value="{{ a.faits.model_dump_json() }}">
+      <input type="hidden" name="question" value="{{ q.texte }}">
+      <input type="hidden" name="fait" value="{{ q.fait_concerne }}">
+      <span class="grow">{{ q.texte }}</span>
+      <button name="reponse" value="oui" class="border rounded px-2 py-0.5 bg-white hover:bg-green-50">oui</button>
+      <button name="reponse" value="non" class="border rounded px-2 py-0.5 bg-white hover:bg-red-50">non</button>
+      <button name="reponse" value="je ne sais pas" class="border rounded px-2 py-0.5 bg-white">je ne sais pas</button>
+    </form>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <details class="text-xs text-slate-500">
+    <summary class="cursor-pointer">Voir les faits extraits · {{ a.verification.citations_verifiees }} citation(s) vérifiée(s) verbatim,
+      {{ a.verification.citations_rejetees }} rejetée(s){% if a.verification.nouvel_essai %}, après un nouvel essai{% endif %} · {{ a.modele }}</summary>
+    <pre class="mt-2 bg-slate-50 p-2 rounded overflow-auto">{{ a.faits.model_dump(mode="json")|tojson_pretty }}</pre>
+  </details>
+</article>

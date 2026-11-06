@@ -1,0 +1,35 @@
+# Local development: Postgres + pgvector and the BGE-M3 embedding server (same as rag-LexEU).
+#   docker compose up -d --wait
+name: sinistre
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg17
+    environment:
+      POSTGRES_USER: sinistre
+      POSTGRES_PASSWORD: sinistre
+      POSTGRES_DB: sinistre
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sinistre"]
+      interval: 3s
+      retries: 20
+
+  embeddings:
+    profiles: ["ml"] # 4 GB RAM; only needed for ingestion and the search fallback
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.9.4
+    command:
+      - --model-id=BAAI/bge-m3
+      - --revision=5617a9f61b028005a4858fdac845db406aefb181
+      - --max-batch-tokens=4096
+      - --max-client-batch-size=32
+      - --auto-truncate
+    ports: ["127.0.0.1:8081:80"]
+    volumes: [hf_cache:/data]
+
+volumes:
+  postgres_data:
+  hf_cache:
+    external: true
+    name: lexeu_hf_cache # model already downloaded by rag-LexEU

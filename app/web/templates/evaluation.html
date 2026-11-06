@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_macros.html" import badge %}
+{% block content %}
+<h1 class="text-lg font-semibold mb-1">Évaluation</h1>
+{% if not ev %}
+<p class="text-sm text-slate-500">Pas encore de résultats : lancer <code>make eval</code>.</p>
+{% else %}
+{% set m = ev.metriques %}
+<p class="text-sm text-slate-500 mb-4">{{ ev.nb_cas }} cas synthétiques × contrats, générés le {{ ev.date }} avec {{ ev.modele }}.
+  Les verdicts attendus marqués « proposé » n'ont pas encore été validés à la main : ils comptent à part.</p>
+<div class="grid sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+  {% for label, key, unit in [("Exactitude (validés)", "exactitude_validee", "%"), ("Exactitude (tous)", "exactitude", "%"),
+       ("Fidélité des citations", "fidelite", "%"), ("Rappel des clauses clés", "rappel_clauses", "%"),
+       ("Ambiguïtés non tranchées", "detection_ambiguites", "%"), ("Latence p50 / p95", "latence", "")] %}
+  <div class="bg-white border rounded-lg p-3">
+    <p class="text-xs text-slate-500">{{ label }}</p>
+    <p class="text-xl font-semibold">{% if m[key] is none %}–{% elif unit %}{{ m[key] }} {{ unit }}{% else %}{{ m[key] }}{% endif %}</p>
+  </div>
+  {% endfor %}
+</div>
+
+<h2 class="font-semibold mb-2">Matrice de confusion (attendu en ligne, obtenu en colonne)</h2>
+<table class="text-sm bg-white border rounded mb-6">
+  <tr><th></th>{% for v in ev.verdicts %}<th class="p-2 text-xs">{{ v|replace("_", " ") }}</th>{% endfor %}</tr>
+  {% for a in ev.verdicts %}<tr><th class="p-2 text-xs text-left">{{ a|replace("_", " ") }}</th>
+    {% for b in ev.verdicts %}<td class="p-2 text-center {{ 'bg-green-50 font-semibold' if a == b }}">{{ ev.confusion[a][b] }}</td>{% endfor %}</tr>{% endfor %}
+</table>
+
+<h2 class="font-semibold mb-2">Cas</h2>
+<div class="overflow-x-auto bg-white border rounded-lg">
+<table class="w-full text-sm">
+  <thead><tr class="text-left text-slate-500 border-b"><th class="p-2">Cas</th><th>Contrat</th><th>Attendu</th><th>Obtenu</th><th>Citations</th><th class="p-2">Écart / note</th></tr></thead>
+  {% for r in ev.cas %}
+  <tr class="border-b align-top {{ 'bg-red-50' if r.attendu and r.attendu != r.obtenu }}">
+    <td class="p-2">{{ r.id }}<br><span class="text-xs text-slate-500">{{ r.recit|truncate(90) }}</span></td>
+    <td class="text-xs">{{ r.contract_id }}</td>
+    <td>{% if r.attendu %}{{ badge(r.attendu) }}{% if r.propose %}<br><span class="text-xs text-slate-400">proposé</span>{% endif %}{% else %}–{% endif %}</td>
+    <td>{% if r.obtenu %}{{ badge(r.obtenu) }}{% else %}<span class="text-red-700 text-xs">{{ r.erreur }}</span>{% endif %}</td>
+    <td class="text-xs">{{ r.citations_verifiees }} ✓ / {{ r.citations_rejetees }} ✗</td>
+    <td class="p-2 text-xs">{{ r.note }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endif %}
+{% endblock %}

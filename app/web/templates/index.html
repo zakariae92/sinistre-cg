@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% set drapeaux = {"LU": "🇱🇺", "BE": "🇧🇪", "FR": "🇫🇷"} %}
+{% block content %}
+<div class="grid lg:grid-cols-2 gap-6">
+  <section>
+    <form hx-post="/analyser" hx-target="#resultat" hx-indicator="#chargement" class="bg-white border rounded-lg p-4 space-y-3">
+      <label class="block text-sm font-medium">Contrat
+        <select name="contract_id" class="mt-1 w-full border rounded px-2 py-1.5">
+          {% for pays, groupe in contrats|groupby("pays")|reverse %}
+          <optgroup label="{{ drapeaux.get(pays, '') }} {{ pays }}">
+            {% for c in groupe %}<option value="{{ c.id }}">{{ c.assureur }} – {{ c.produit }} ({{ c.langue|upper }})</option>{% endfor %}
+          </optgroup>
+          {% endfor %}
+          <option value="tous" {% if selection == "tous" %}selected{% endif %}>Tous les contrats (comparaison)</option>
+        </select>
+      </label>
+      <label class="block text-sm font-medium">Décrivez le sinistre
+        <textarea id="recit" name="recit" rows="4" maxlength="2000" required class="mt-1 w-full border rounded px-2 py-1.5"
+          placeholder="Ex. : mon vélo a été volé dans le local commun de l'immeuble…"></textarea>
+      </label>
+      <div class="flex flex-wrap gap-2">
+        {% for e in exemples %}
+        <button type="button" class="text-xs border rounded-full px-3 py-1 bg-slate-50 hover:bg-slate-100 text-left"
+          onclick="document.getElementById('recit').value = this.dataset.recit" data-recit="{{ e }}">{{ e|truncate(58) }}</button>
+        {% endfor %}
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="bg-slate-900 text-white rounded px-4 py-2 text-sm">Analyser</button>
+        <span id="chargement" class="htmx-indicator text-sm text-slate-500">Analyse en cours (15 à 40 s si le cas n'est pas en cache)…</span>
+      </div>
+    </form>
+    <div id="resultat" class="mt-5"></div>
+  </section>
+  <aside class="lg:sticky lg:top-4 self-start">
+    <div class="bg-white border rounded-lg">
+      <div class="flex items-center justify-between px-3 py-2 border-b text-sm">
+        <span id="pdf-titre" class="text-slate-500">Cliquez sur une citation pour ouvrir la clause dans le PDF</span>
+        <a id="pdf-source" class="text-blue-700 hover:underline hidden" target="_blank" rel="noopener">source</a>
+      </div>
+      <div id="pdf-zone" class="h-[78vh] overflow-auto bg-slate-200 p-2"><div id="pdf-pages"></div></div>
+    </div>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="/static/app.js"></script>
+{% endblock %}

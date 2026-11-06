@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="prose max-w-3xl space-y-4 text-sm leading-relaxed">
+<h1 class="text-lg font-semibold">À propos</h1>
+<p>Un gestionnaire reçoit une déclaration : <b>le contrat couvre-t-il ce sinistre ?</b> Ce démonstrateur répond à partir des
+conditions générales publiques, explique son raisonnement étape par étape, cite les clauses exactes (vérifiées mot pour mot)
+et signale les ambiguïtés et les informations manquantes plutôt que de trancher à tort.</p>
+
+<h2 class="font-semibold text-base">On ne « chatte » pas avec un PDF</h2>
+<pre class="bg-white border rounded p-3 text-xs overflow-auto">
+INGESTION (une fois par contrat, idempotente par sha256)
+PDF ─► parsing PyMuPDF (blocs, polices, bbox) ─► arbre de clauses ─► Postgres (FTS français + embeddings BGE-M3 locaux)
+                                                   └─► extraction LLM : garanties, exclusions, définitions, conditions, plafonds
+                                                       chaque ligne pointe vers ses clauses + une citation vérifiée (sinon rejetée)
+
+ANALYSE D'UN SINISTRE
+récit ─► 1. faits structurés (inconnu = null) ─► 2. contrat
+      ─► 3. récupération ciblée : SQL sur la base structurée (catégorie du sinistre) + définitions + recherche hybride en secours
+      ─► 4. raisonnement LLM contraint (JSON strict, citation obligatoire à chaque étape)
+      ─► 5. vérification des citations (verbatim / fuzzy ≥ 0,9), un nouvel essai, puis retrait et rétrogradation du verdict
+      ─► 6. verdict + ambiguïtés + questions à l'assuré (boucle de clarification)
+</pre>
+
+<h2 class="font-semibold text-base">Choix techniques</h2>
+<ul class="list-disc ml-5 space-y-1">
+  <li>FastAPI + Pydantic : chaque sortie du LLM est un schéma validé (structured output Gemini).</li>
+  <li>PostgreSQL 17 + pgvector : base structurée, recherche plein texte <code>french</code> et vecteurs dans une seule base.</li>
+  <li>Embeddings BGE-M3 (multilingue FR/EN) servis localement, sans appel externe ; seul le raisonnement appelle l'API Gemini.</li>
+  <li>Référentiel commun de 15 catégories de garanties : c'est lui qui rend comparables des contrats rédigés différemment.</li>
+  <li>Interface Jinja2 + htmx + PDF.js (surlignage des lignes de la clause), sans build JavaScript.</li>
+  <li>Cache Postgres par (contrat, faits, version du prompt) : les exemples sont pré-calculés, la démo est instantanée.</li>
+</ul>
+
+<h2 class="font-semibold text-base">Passer à des centaines de contrats</h2>
+<p>Ingestion idempotente par sha256 ; même schéma d'extraction et même référentiel pour tous ; versionnage par date d'effet ;
+file de validation humaine pour les extractions rejetées (<code>data/extraction_rejets.jsonl</code>) ; requêtes SQL transverses
+(« quels contrats excluent le vol dans les parties communes ? ») ; coût d'ingestion payé une fois par contrat ; coût d'une analyse
+indépendant de la taille du corpus grâce à la récupération ciblée ; évaluation par contrat pour détecter les régressions.</p>
+
+<h2 class="font-semibold text-base">Limites assumées</h2>
+<ul class="list-disc ml-5 space-y-1">
+  <li>Seules les conditions générales sont analysées. Les conditions particulières, qui priment, ne sont pas connues : le système le signale et n'affirme jamais une couverture définitive.</li>
+  <li>Montants, plafonds et franchises dépendent souvent des conditions particulières.</li>
+  <li>Les contrats français et belges relèvent d'autres cadres légaux : ils prouvent la généricité du pipeline, pas un conseil.</li>
+  <li>Le parsing PDF est générique (tailles de police, gras, numérotation) : les tableaux et les mises en page en colonnes sont imparfaitement découpés, ce qui se voit dans les fils d'Ariane de certaines clauses.</li>
+  <li>La jurisprudence et les pratiques de gestion ne sont pas couvertes.</li>
+</ul>
+</article>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from "_macros.html" import cite %}
+{% block content %}
+<h1 class="text-lg font-semibold mb-1">Base structurée des contrats</h1>
+<p class="text-sm text-slate-500 mb-4">Chaque ligne a été extraite par le LLM puis <b>vérifiée</b> : sa citation existe mot pour mot dans la clause source. C'est cette base, et non le PDF brut, que l'analyse interroge.</p>
+
+<h2 class="font-semibold mt-6 mb-2">Matrice catégories × contrats</h2>
+<div class="overflow-x-auto bg-white border rounded-lg">
+<table class="text-sm w-full">
+  <thead><tr class="border-b"><th class="text-left p-2">Catégorie</th>{% for c in contrats %}<th class="p-2 text-xs font-medium">{{ c.assureur }}<br><span class="text-slate-400">{{ c.pays }}</span></th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for cat, cells in matrice.items() %}
+    <tr class="border-b"><td class="p-2">{{ cat|replace("_", " ") }}</td>
+    {% for c in contrats %}{% set v = cells.get(c.id) %}<td class="p-2 text-center {{ 'text-green-700' if v == '✓' else ('text-amber-600' if v else 'text-slate-300') }}">{{ v or "✗" }}</td>{% endfor %}</tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="text-xs text-slate-400 mt-1">✗ = aucune garantie de cette catégorie extraite des CG (elle peut exister dans les conditions particulières).</p>
+
+{% for c in contrats %}
+<section class="bg-white border rounded-lg p-4 mt-6">
+  <h2 class="font-semibold">{{ c.assureur }} – {{ c.produit }}</h2>
+  <p class="text-xs text-slate-500">{{ c.pays }} · {{ c.cadre_legal }} · langue {{ c.langue }} · version {{ c.version }} · {{ c.nb_pages }} pages ·
+    <a class="text-blue-700 hover:underline" href="{{ c.source_url }}" target="_blank" rel="noopener">source</a></p>
+  {% for table in ["garanties", "exclusions", "definitions", "conditions", "plafonds"] %}
+  {% set items = rows[table]|selectattr("contract_id", "equalto", c.id)|list %}
+  <details class="mt-2"><summary class="cursor-pointer text-sm">{{ table|capitalize }} ({{ items|length }})</summary>
+    <ul class="text-sm divide-y mt-1">
+    {% for it in items %}
+      <li class="py-1.5 flex gap-2 items-start">
+        <span class="grow">
+          {% if it.nom %}<b>{{ it.nom }}</b> <span class="text-xs text-slate-400">{{ it.categorie }}{% if it.optionnelle %} · option{% endif %}</span> — {% endif %}
+          {% if it.terme %}<b>{{ it.terme }}</b> : {{ it.definition }}{% endif %}
+          {% if it.libelle %}<b>{{ it.libelle }}</b> {{ it.montant or "" }} {% if it.franchise %}(franchise {{ it.franchise }}){% endif %}{% endif %}
+          {{ it.description or "" }}
+          {% if table in ["exclusions", "conditions"] %}<span class="text-xs text-slate-400">{{ it.categorie or "générale" }}</span>{% endif %}
+        </span>
+        <span class="shrink-0 space-x-1">{% for cid in it.clause_ids %}{% if clauses[cid] %}{{ cite(c.id, clauses[cid]) }}{% endif %}{% endfor %}</span>
+      </li>
+    {% endfor %}
+    </ul>
+  </details>
+  {% endfor %}
+</section>
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="/static/app.js"></script>{% endblock %}
